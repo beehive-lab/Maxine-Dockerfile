@@ -1,22 +1,31 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER "Foivos Zakkak" <foivos.zakkak@manchester.ac.uk>
 
-# Add saucy sources for java 7 u25
-RUN echo "\ndeb http://old-releases.ubuntu.com/ubuntu/ saucy main" >> /etc/apt/sources.list
 RUN apt-get update
-
-RUN apt-get install -y make
-RUN apt-get install -y gcc
-RUN apt-get install -y gdb
-RUN apt-get install -y g++
+RUN apt-get install -y zsh
 RUN apt-get install -y mercurial
 
-RUN apt-get install -y openjdk-7-jre-lib=7u25-2.3.12-4ubuntu3 openjdk-7-jre-headless=7u25-2.3.12-4ubuntu3 openjdk-7-jre=7u25-2.3.12-4ubuntu3 openjdk-7-jdk=7u25-2.3.12-4ubuntu3
+# Download and build jdk7u131-b00
+RUN hg clone http://hg.openjdk.java.net/jdk7u/jdk7u/ /opt/jdk7u
+RUN cd /opt/jdk7u && hg up jdk7u131-b00
+RUN cd /opt/jdk7u && sh ./make/scripts/hgforest.sh clone
+RUN cd /opt/jdk7u && sh ./make/scripts/hgforest.sh up jdk7u131-b00
 
-RUN apt-get install -y zsh
+# jdk7u build dependencies
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt-get build-dep -y openjdk-9-jdk
+RUN apt-get install -y openjdk-7-jdk
+
+ENV ALT_BOOTDIR=/usr/lib/jvm/java-7-openjdk-amd64/
+ENV ALT_JDK_IMPORT_PATH=$ALT_BOOTDIR
+
+RUN cd /opt/jdk7u && make debug_build
+
+ENV JAVA_HOME=/opt/jdk7u/build/linux-amd64-debug/
 
 ENV MAXINE_SRC=/maxine-src
-ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/
 ENV MAXINE_HOME=$MAXINE_SRC/maxine
 ENV PATH=$PATH:$MAXINE_SRC/graal/mxtool/:$MAXINE_HOME/com.oracle.max.vm.native/generated/linux/
 
