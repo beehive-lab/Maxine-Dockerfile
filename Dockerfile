@@ -1,26 +1,55 @@
-FROM ubuntu:14.04
-MAINTAINER "Foivos Zakkak" <foivos.zakkak@manchester.ac.uk>
+# escape=\
 
-# Add saucy sources for java 7 u25
-RUN echo "\ndeb http://old-releases.ubuntu.com/ubuntu/ saucy main" >> /etc/apt/sources.list
+FROM ubuntu:16.04
+
 RUN apt-get update
 
+RUN apt-get install -y wget
 RUN apt-get install -y make
 RUN apt-get install -y gcc
 RUN apt-get install -y gdb
 RUN apt-get install -y g++
-RUN apt-get install -y mercurial
+RUN apt-get install -y python2.7
+RUN apt-get install -y sudo
 
-RUN apt-get install -y openjdk-7-jre-lib=7u25-2.3.12-4ubuntu3 openjdk-7-jre-headless=7u25-2.3.12-4ubuntu3 openjdk-7-jre=7u25-2.3.12-4ubuntu3 openjdk-7-jdk=7u25-2.3.12-4ubuntu3
+# install openjdk7
+ENV ARCH=amd64
+ENV VERSION=7u151-2.6.11-3
+ENV JAVA=openjdk-7
+ENV BASE_URL=http://snapshot.debian.org/archive/debian/20171124T100538Z
 
-RUN apt-get install -y zsh
+WORKDIR /tmp
 
-ENV MAXINE_SRC=/maxine-src
+RUN for package in jre jre-headless jdk dbg; do \
+wget -nv ${BASE_URL}/pool/main/o/${JAVA}/${JAVA}-${package}_${VERSION}_${ARCH}.deb; \
+done
+
+# openjdk dependencies
+RUN wget -nv http://ftp.uk.debian.org/debian/pool/main/libj/libjpeg-turbo/libjpeg62-turbo_1.5.1-2_${ARCH}.deb
+RUN wget -nv http://ftp.uk.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.13.0-5_${ARCH}.deb
+RUN wget -nv http://ftp.uk.debian.org/debian/pool/main/f/fontconfig/fontconfig-config_2.13.0-5_all.deb
+
+RUN dpkg -i ${JAVA}-* libjpeg62-turbo_1* libfontconfig1* fontconfig-config* || \
+apt install -yf
+
+# remove install deps
+RUN apt-get remove -y --purge wget
+
+ENV HOME /home/developer
+ENV MAXINE_SRC=$HOME/maxine-vm
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/
 ENV MAXINE_HOME=$MAXINE_SRC/maxine
 ENV PATH=$PATH:$MAXINE_SRC/graal/mxtool/:$MAXINE_HOME/com.oracle.max.vm.native/generated/linux/
 
-# You will need to download and install SPECJVM2008 manually to the following directory
-ENV SPECJVM2008=$MAXINE_SRC/graal/lib/SPECJVM2008
+# Replace 1000 with your user / group id
+# Required for sharing X11 socket
+RUN export uid=1000 gid=1000 && \
+    mkdir -p /home/developer && \
+    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown ${uid}:${gid} -R /home/developer
 
+USER developer
 WORKDIR $MAXINE_HOME
