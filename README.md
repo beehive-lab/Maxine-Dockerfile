@@ -30,14 +30,14 @@ From the directory containing the directory created
 in [Getting Maxine VM and Graal](#getting-maxine-vm-and-graal)
 
 ```
-docker run -v $(pwd)/maxine-src:/maxine-src -ti --rm maxine bash
+docker run -v $(pwd)/maxine-src:/home/developer/maxine-vm -ti --rm maxine bash
 ```
 
 This will start the docker image and open a shell prompt where you can
 execute the mx commands etc...
 
-* `-v $(pwd)/maxine-src:/maxine-src` essentially mounts the host
-  `$(pwd)/maxine-src` directory to the docker container `/maxine-src`
+* `-v $(pwd)/maxine-src:/home/developer/maxine-vm` essentially mounts the host
+  `$(pwd)/maxine-src` directory to the docker container `/home/developer/maxine-vm`
   directory.  Any changes performed outside the docker container are
   visible to the container and vice versa.
 * `-ti` instructs docker to create an interactive session with a
@@ -59,7 +59,7 @@ From the directory containing the directory created
 in [Getting Maxine VM and Graal](#getting-maxine-vm-and-graal)
 
 ```
-docker run -v $(pwd)/maxine-src:/maxine-src \
+docker run -v $(pwd)/maxine-src:/home/developer/maxine-vm \
 					 -v /tmp/.X11-unix:/tmp/.X11-unix \
 					 -e DISPLAY=unix$DISPLAY \
 					 --cap-add=SYS_PTRACE \
