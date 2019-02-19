@@ -13,6 +13,8 @@ RUN apt-get install -y git
 RUN apt-get install -y openjdk-8-jdk
 
 RUN apt-get install -y zsh
+RUN apt-get install -y tmux
+RUN apt-get install -y screen
 
 # Cross-ISA support
 RUN apt-get install -y lsof
