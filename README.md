@@ -25,23 +25,18 @@ git clone https://github.com/beehive-lab/Maxine-VM.git maxine
 
 ## Starting the docker image
 
-From the parent directory of `maxine-src` (created in [Getting Maxine VM](#getting-maxine-vm))
+From the directory `maxine-src` (created in [Getting Maxine VM](#getting-maxine-vm))
 
 ```
-docker run -v $(pwd)/maxine-src:/maxine-src -u $(id -u):$(id -g) -ti maxine bash
+docker run --mount src="$(pwd)",target="/maxine-src",type=bind --mount src="$HOME/.mx",target="/home/user/.mx",type=bind -e UID=$(id -u) -e GID=$(id -g) -ti maxine bash
 ```
 
-This will start the docker image and open a shell prompt where you can
-execute the mx commands etc...
+This will start the docker image and open a shell prompt where you can execute the mx commands etc...
 
-* `-u $(id -u):$(id -g)` instructs docker to write and read files as the
-  current user instead of root which is the default.
-* `-v $(pwd)/maxine-kenai:/maxine-src` essentially mounts the host
-  `$(pwd)/maxine-kenai` directory to the docker container `/maxine-src`
-  directory.
-  Any changes performed outside the docker container are
-  visible to the container and vice versa.
-* `--ti` instructs docker to create an interactive session with a
-  pseudo-tty, to allow us to interact with the container.
-* `--rm` instructs docker to delete the container after we close it.
+- `-u $(id -u):$(id -g)` instructs docker to write and read files as the current user instead of root which is the default.
+- `--mount src="$(pwd)/maxine-src",target="/maxine-src",type=bind` essentially mounts the host `$(pwd)/maxine-kenai` directory to the docker container `/maxine-src` directory.
+  Similarly, `--mount src="$HOME/.mx",target="/home/user/.mx",type=bind` does the same for the `~.mx` directory.
+  Any changes performed outside the docker container are visible to the container and vice versa.
+- `-ti` instructs docker to create an interactive session with a pseudo-tty, to allow us to interact with the container.
+- `--rm` instructs docker to delete the container after we close it.
   Don't use this if you want to keep bash history among sessions.

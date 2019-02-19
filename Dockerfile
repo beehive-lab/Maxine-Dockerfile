@@ -14,6 +14,23 @@ RUN apt-get install -y openjdk-8-jdk
 
 RUN apt-get install -y zsh
 
+# Cross-ISA support
+RUN apt-get install -y lsof
+RUN apt-get install -y gdb-multiarch
+
+# For AArch64 and ARMv7 support
+RUN apt-get install -y qemu-system-arm
+RUN apt-get install -y gcc-aarch64-linux-gnu
+RUN apt-get install -y gcc-arm-none-eabi
+
+# For RISC-V support
+RUN apt-get install gcc-riscv64-linux-gnu
+# gdb
+# qemu
+
+# For perf support
+RUN apt-get install -y linux-tools-generic
+
 ENV MAXINE_SRC=/maxine-src
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ENV MAXINE_HOME=$MAXINE_SRC/maxine
@@ -24,3 +41,11 @@ ENV PATH=$PATH:$MAXINE_SRC/mx/:$MAXINE_HOME/com.oracle.max.vm.native/generated/l
 # ENV SPECJVM2008=$MAXINE_SRC/graal/lib/SPECJVM2008
 
 WORKDIR $MAXINE_HOME
+
+# setup user management as shown in:
+# https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
+RUN apt-get install -y gosu
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
