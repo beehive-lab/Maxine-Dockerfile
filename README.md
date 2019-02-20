@@ -5,7 +5,7 @@
 Enter the directory with the Dockerfile and run:
 
 ```
-docker build ./ -t maxine
+docker build ./ -t maxine-dev
 ```
 
 ## Getting Maxine VM
@@ -28,7 +28,7 @@ git clone https://github.com/beehive-lab/Maxine-VM.git maxine
 From the directory `maxine-src` (created in [Getting Maxine VM](#getting-maxine-vm))
 
 ```
-docker run --mount src="$(pwd)",target="/maxine-src",type=bind --mount src="$HOME/.mx",target="/home/user/.mx",type=bind -e UID=$(id -u) -e GID=$(id -g) -ti maxine bash
+docker run --mount src="$(pwd)",target="/maxine-src",type=bind --mount src="$HOME/.mx",target="/home/user/.mx",type=bind -e UID=$(id -u) -e GID=$(id -g) -ti maxine-dev bash
 ```
 
 This will start the docker image and open a shell prompt where you can execute the mx commands etc...
