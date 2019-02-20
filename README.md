@@ -34,7 +34,7 @@ docker run --mount src="$(pwd)",target="/maxine-src",type=bind --mount src="$HOM
 This will start the docker image and open a shell prompt where you can execute the mx commands etc...
 
 - `-u $(id -u):$(id -g)` instructs docker to write and read files as the current user instead of root which is the default.
-- `--mount src="$(pwd)/maxine-src",target="/maxine-src",type=bind` essentially mounts the host `$(pwd)/maxine-kenai` directory to the docker container `/maxine-src` directory.
+- `--mount src="$(pwd)/maxine-src",target="/maxine-src",type=bind` essentially mounts the host `$(pwd)/maxine-src` directory to the docker container `/maxine-src` directory.
   Similarly, `--mount src="$HOME/.mx",target="/home/user/.mx",type=bind` does the same for the `~.mx` directory.
   Any changes performed outside the docker container are visible to the container and vice versa.
 - `-ti` instructs docker to create an interactive session with a pseudo-tty, to allow us to interact with the container.
