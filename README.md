@@ -38,5 +38,3 @@ This will start the docker image and open a shell prompt where you can execute t
   Similarly, `--mount src="$HOME/.mx",target="/home/user/.mx",type=bind` does the same for the `~.mx` directory.
   Any changes performed outside the docker container are visible to the container and vice versa.
 - `-ti` instructs docker to create an interactive session with a pseudo-tty, to allow us to interact with the container.
-- `--rm` instructs docker to delete the container after we close it.
-  Don't use this if you want to keep bash history among sessions.
